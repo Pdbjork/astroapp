@@ -1,0 +1,41 @@
+﻿<script>
+    async function calculateBirthChart() {
+        const birthData = {
+            year: document.getElementById('year').value,
+            month: document.getElementById('month').value,
+            day: document.getElementById('day').value,
+            hour: document.getElementById('hour').value,
+            minute: document.getElementById('minute').value,
+            latitude: document.getElementById('latitude').value,
+            longitude: document.getElementById('longitude').value
+        };
+
+        console.log('Sending data:', birthData);  // Debug log
+
+        try {
+            const response = await fetch('/calculate_birth_chart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(birthData)
+            });
+            
+            const data = await response.json();
+            console.log('Received response:', data);  // Debug log
+            
+            if (data.error) {
+                let errorMessage = `<p style="color: red;">Error: ${data.error}</p>`;
+                if (data.details) {
+                    errorMessage += `<p style="color: red;">Details: ${data.details}</p>`;
+                }
+                document.getElementById('result').innerHTML = errorMessage;
+            } else {
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').innerHTML = `<p style="color: red;">Error calculating birth chart: ${error.message}</p>`;
+        }
+    }
+</script>
